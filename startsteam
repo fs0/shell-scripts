@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export SDL_AUDIODRIVER=alsa
+export STEAM_RUNTIME=1
+/usr/bin/steam

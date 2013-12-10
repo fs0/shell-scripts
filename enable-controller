@@ -1,0 +1,7 @@
+#! /bin/bash
+if [ $# -eq 1 ]
+then
+  sudo xboxdrv --silent --deadzone 4000 --led 15 --trigger-as-button --type xbox360 --device-by-id 045e:028e -c $1
+else
+  sudo xboxdrv --silent --deadzone 4000 --led 15 --trigger-as-button --type xbox360 --device-by-id 045e:028e
+fi

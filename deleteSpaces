@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ $# -eq 1 ]
+then
+  cd $1
+fi
+
+for f in * 
+do
+  newFile=`echo "$f" | tr -d " "`
+  #[ ! -f "$newFile" ] && mv "$f" "$newFile" || echo "$f not changed!"
+  [ ! -f "$newFile" ] && [ ! -d "$newFile" ] && mv "$f" "$newFile" && echo "'$f' -> '$newFile'"
+
+done
+exit 0

@@ -1,0 +1,158 @@
+#!/bin/bash
+
+########################
+# Feel free to improve!#
+########################
+
+# dependcies: mplayer
+
+OPTION="x"
+SMSO=`tput smso`  #bold on
+RMSO=`tput rmso`  #bold off
+SMUL=`tput smul`  #underline on
+RMUL=`tput rmul`  #underline off
+
+menu () {
+    clear
+    echo "${SMSO}Welcome               ${RMSO}"
+    echo
+    echo "help:             help"
+    echo "quit program:     q"
+    echo "start dvd:        play"
+    echo "start converter:  start"
+    echo "audio:            audio"
+    echo
+    echo
+}
+
+
+showhelp() {
+
+    clear
+    echo
+    echo "${SMSO}Help Page   ${RMSO}"
+    echo
+    echo
+    echo "${SMUL}Instructions                  ${RMUL}"
+    echo "0 - Make sure a dvd is inserted!"
+    echo "1 - To start the dvd, type: play"
+    echo "2 - Choose the favored title (just try numbers 1,2,3,4,...)"
+    echo "3 - Look for favored start- and end-chapter. Use @ and ! to browse through chapters."
+    echo "4 - Look for favored language track: "
+    echo "   - use # to cycle through available tracks (you'll need the aid, e.g. 130)"
+    echo "   - or type: audio (here in the program)"
+    echo
+    echo
+    echo "${SMUL}Mplayer options              ${RMUL}"
+    echo "quit:     			q"
+    echo "fullscreen:   			f"
+    echo "seek 10sec:   			<- and ->"
+    echo "seek 1min:    			up and down"
+    echo "seek 10min:   			pgup and pgdown"
+    echo "show time:    			o"
+    echo "pause:        			space"
+    echo "cycle through audiotracks:  	#"
+    echo "cycle through subtitles:      	j"
+    echo "next / previous chapter:      	@ / !"
+    echo
+    echo "for mplayer manual: man mplayer (in terminal)"
+    echo
+    echo -n "Press key> "
+    read
+}
+
+dvdtowav() {
+            read -p "filename: " FILENAME
+            read -p "title number: " TITLE
+            read -p "language (type 'show' for avail. tracks): " LANGUAGE
+            if [ "$LANGUAGE" = "show" ]
+            then
+                while [ "$LANGUAGE" = "show" ]
+                do
+                    mplayer dvd://$TITLE -identify -frames 0 | grep 'audio stream: ' > tempdvd2wavlangfile_willbedeleted
+                    clear
+                    cat tempdvd2wavlangfile_willbedeleted
+                    rm tempdvd2wavlangfile_willbedeleted
+                    echo "You'll need the aid."
+                    read -p "language (type 'show' for avail. tracks): " LANGUAGE
+                done
+            fi
+            echo "chapter (for single chapter: startchapter = endchapter)"
+            read -p "from: " FROM
+            read -p "to: " TO
+            mplayer -vo null -ao pcm:file=$FILENAME  dvd://$TITLE -chapter $FROM-$TO -aid $LANGUAGE
+            clear
+            dir=`pwd`
+            echo "'$FILENAME' should be in $dir"
+            echo
+            echo "Use a program like audacity to adjust the volume."
+            echo
+            read -p "exit? (y/n) " EXIT
+            if [ -z $EXIT ]
+            then
+                echo "hmmm, I'll continue."
+                sleep 1
+            else
+                if [ $EXIT = "n" ]
+                then
+                    echo "Excellent!!!"
+                    echo
+		    sleep 1
+                else
+                    if [ $EXIT = "y" ]
+                    then
+                        OPTION="Q"
+                    else
+                        echo "Pardon me?"
+                        echo "I'll continue..."
+                        sleep 1
+                    fi
+                fi
+            fi
+
+
+}
+
+
+while [ "$OPTION" != "Q" ]
+do
+    menu
+
+    read -p ">>> " OPTION
+
+    # bash has no typeset -u build-in
+    # that's why the 'tr' to uppercase
+    [ ! -z ${OPTION} ] && OPTION=`echo ${OPTION}|tr "[:lower:]" "[:upper:]"`
+
+    case ${OPTION} in
+
+        "HELP")
+            showhelp;;
+        "START")
+            dvdtowav;;
+        "PLAY")
+            read -p "title number: " TITLE
+            mplayer dvd://$TITLE
+            ;;
+
+        "AUDIO")
+            read -p "title number: " TITLE
+            mplayer dvd://$TITLE -identify -frames 0 | grep 'audio stream: ' > tempdvd2wavlangfile_willbedeleted
+            clear
+            cat tempdvd2wavlangfile_willbedeleted
+            rm tempdvd2wavlangfile_willbedeleted
+            echo "You'll need the aid."
+            #read -p "language (type show for avail. tracks): " LANGUAGE
+            read -p "press key: " WHATEVER
+            ;;
+        *)
+            [ "${OPTION}" != "Q" ] && read -p "Pardon me? " WHATEVER
+            ;;
+    esac
+
+done
+echo
+echo "Bye!"
+echo
+sleep 1
+

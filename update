@@ -1,0 +1,67 @@
+#! /usr/bin/bash
+ 
+url="https://www.archlinux.org/mirrorlist/?country=DE&protocol=http&ip_version=4&use_mirror_status=on"
+#url="https://www.archlinux.org/mirrorlist/?country=GB&protocol=http&ip_version=4&use_mirror_status=on"
+#url="https://www.archlinux.org/mirrorlist/?country=US&protocol=http&ip_version=4&use_mirror_status=on"
+download=0
+ 
+# Download
+while true; do
+  read -p "Download mirrorlist? (y/n): " yn
+  case $yn in
+  [Yy] ) tmp_ml=$(mktemp --suffix=-mirrorlist)  # temporary mirrorlist
+         download=1
+         if curl -s "$url" -o "$tmp_ml"; then
+           if ! grep "^## Arch Linux repository mirrorlist" "$tmp_ml" > /dev/null; then
+             echo "Error: Download invalid"
+             exit 1
+           fi
+         else
+           echo "Error: Download failed"
+           exit 1
+         fi
+         # Edit
+         sed -i 's/^#Server/Server/g' "$tmp_ml"
+         break ;;
+  [Nn] ) break ;;
+  *    ) true
+  esac
+done
+ 
+# downloaded new list?
+if [ $download -eq 1 ]; then
+
+  # show mirrorlist
+  echo "mirrorlist: "
+  cat "$tmp_ml"
+ 
+  # Install
+  while true; do
+    read -p "Install mirrorlist? (y/n): " yn
+    case $yn in
+    [Yy] ) sudo install -Dm644 "$tmp_ml" /etc/pacman.d/mirrorlist
+           break ;;
+    [Nn] ) break ;;
+    *    ) true
+    esac
+  done
+
+  # Refresh
+  echo
+  echo "Force refresh package list"
+  sudo pacman -Syy
+fi
+
+# remove orphans if found
+echo
+echo "Searching for orphaned packages ..."
+if [ "`sudo pacman -Qdtq`" != "" ]; then # orphans found
+  sudo pacman -Rs $(sudo pacman -Qdtq)
+else
+  echo "none found."
+fi
+
+# Update
+echo
+echo "Updating ..."
+sudo packer -Syu

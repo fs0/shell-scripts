@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export EPSXE='/data/games/PSX/ePSXe/'
+export LD_LIBRARY_PATH=$EPSXE
+cd $EPSXE
+./epsxe
+chmod 666 $EPSXE/cfg/*.cfg $EPSXE/sstates/* \
+$EPSXE/memcards/*.mcr $EPSXE/snap/* 2>/dev/null 

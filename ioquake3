@@ -1,0 +1,4 @@
+#! /bin/bash
+
+#/data/games/QuakeIIIArena/ioq3/build/release-linux-x86_64/ioquake3.x86_64 +set fs_game "excessiveplus"
+/home/fs0/prg/C/ioq3/build/release-linux-x86_64/ioquake3.x86_64 +set fs_game "excessiveplus"
