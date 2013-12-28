@@ -1,4 +1,4 @@
 #!/bin/bash
 
-amixer -c 0 set Master 2dB+ unmute
-amixer -c 1 set Master 2dB+ unmute
+amixer -c DS set Master 2dB+ unmute
+amixer -c PCH set Master 2dB+ unmute
