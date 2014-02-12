@@ -1,0 +1,48 @@
+#! /bin/bash
+
+if [ $# -eq 0 ]
+then
+    echo "call: `basename $0` DIRECTORY"
+else
+
+    echo "WARNING"
+    echo "Files will be deleted."
+    echo "Filenames will be altered."
+
+    while true
+    do
+        read -p "Continue? (y/n):" yn
+        case $yn in
+        [Yy] ) break ;;
+        [Nn] ) exit ;;
+        *    ) true
+        esac
+    done
+
+    DIR=$1
+    list="wav_list_deleteThisFile.txt"
+    errors="error_list_deleteThisFile.txt"
+
+    cd $DIR
+    touch $list
+    touch $errors
+
+    find . -type d -exec deleteSpaces {} \;
+    find . -name '*.wav' > $list
+
+    for f in `cat "$list"` 
+    do 
+      ffmpeg -i $f `echo "$f" | sed s/.wav/.flac/g`
+      if [ $? -eq 0 ]
+      then
+        rm $f
+      else
+        echo "ERROR didn't remove $f." >> $errors
+      fi
+    done
+
+    cat $errors
+    rm $list
+    rm $errors
+
+fi

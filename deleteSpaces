@@ -7,6 +7,10 @@ fi
 
 for f in * 
 do
+  if [ `ls | wc -l` -eq 0 ]
+  then
+    break
+  fi
   newFile=`echo "$f" | tr -d " "`
   #[ ! -f "$newFile" ] && mv "$f" "$newFile" || echo "$f not changed!"
   [ ! -f "$newFile" ] && [ ! -d "$newFile" ] && mv "$f" "$newFile" && echo "'$f' -> '$newFile'"
