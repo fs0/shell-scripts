@@ -1,0 +1,5 @@
+#! /usr/bin/bash
+
+sudo /home/fs0/prg/shell-scripts/iptablesVPN
+sudo systemctl start openvpn@pia.service
+sudo systemctl status openvpn@pia.service

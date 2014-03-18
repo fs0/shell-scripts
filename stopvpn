@@ -1,0 +1,5 @@
+#! /usr/bin/bash
+
+sudo systemctl stop openvpn@pia.service
+sudo /home/fs0/prg/shell-scripts/iptablesRules
+sudo systemctl status openvpn@pia.service
