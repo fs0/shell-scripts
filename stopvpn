@@ -1,5 +1,7 @@
 #! /usr/bin/bash
 
-sudo systemctl stop openvpn@pia.service
+sudo systemctl stop openvpn@vpn.service
 sudo /home/fs0/prg/shell-scripts/iptablesRules
-sudo systemctl status openvpn@pia.service
+sudo systemctl status openvpn@vpn.service
+sudo netctl stop vpn_network
+sudo netctl start my_network

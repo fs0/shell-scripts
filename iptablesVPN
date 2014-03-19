@@ -1,67 +1,63 @@
 #!/usr/bin/bash
+
+VPN=37.48.81.8
+
+# flush
 iptables -F
+ip6tables -F
+
+# default chain policies
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
 ip6tables -P INPUT DROP
 ip6tables -P FORWARD DROP
 ip6tables -P OUTPUT DROP
-iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# accept any local packet from established or related connections
+iptables -A INPUT -d 192.168.178.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# only allow tun interface and localhost
 iptables -A INPUT -i tun+ -j ACCEPT
-iptables -A OUTPUT -o tun+ -j ACCEPT
 iptables -A INPUT -s 127.0.0.1 -j ACCEPT
+iptables -A OUTPUT -o tun+ -j ACCEPT
 iptables -A OUTPUT -d 127.0.0.1 -j ACCEPT
-iptables -A INPUT -s 198.144.156.55 -j ACCEPT
-iptables -A OUTPUT -d 198.144.156.55 -j ACCEPT
-iptables -A INPUT -s 184.75.214.2 -j ACCEPT
-iptables -A OUTPUT -d 184.75.214.2 -j ACCEPT
-iptables -A INPUT -s 5.135.138.112 -j ACCEPT
-iptables -A OUTPUT -d 5.135.138.112 -j ACCEPT
-iptables -A INPUT -s 46.165.251.66 -j ACCEPT
-iptables -A OUTPUT -d 46.165.251.66 -j ACCEPT
-iptables -A INPUT -s 27.122.12.75 -j ACCEPT
-iptables -A OUTPUT -d 27.122.12.75 -j ACCEPT
-iptables -A INPUT -s 109.201.154.154 -j ACCEPT
-iptables -A OUTPUT -d 109.201.154.154 -j ACCEPT
-iptables -A INPUT -s 93.115.84.125 -j ACCEPT
-iptables -A OUTPUT -d 93.115.84.125 -j ACCEPT
-iptables -A INPUT -s 185.3.135.2 -j ACCEPT
-iptables -A OUTPUT -d 185.3.135.2 -j ACCEPT
-iptables -A INPUT -s 46.19.139.98 -j ACCEPT
-iptables -A OUTPUT -d 46.19.139.98 -j ACCEPT
-iptables -A INPUT -s 5.63.147.100 -j ACCEPT
-iptables -A OUTPUT -d 5.63.147.100 -j ACCEPT
-iptables -A INPUT -s 88.150.184.50 -j ACCEPT
-iptables -A OUTPUT -d 88.150.184.50 -j ACCEPT
-iptables -A INPUT -s 198.23.71.91 -j ACCEPT
-iptables -A OUTPUT -d 198.23.71.91 -j ACCEPT
-iptables -A INPUT -s 209.222.18.51 -j ACCEPT
-iptables -A OUTPUT -d 209.222.18.51 -j ACCEPT
-iptables -A INPUT -s 198.178.120.115 -j ACCEPT
-iptables -A OUTPUT -d 198.178.120.115 -j ACCEPT
-iptables -A INPUT -s 50.7.1.146 -j ACCEPT
-iptables -A OUTPUT -d 50.7.1.146 -j ACCEPT
-iptables -A INPUT -s 50.23.131.237 -j ACCEPT
-iptables -A OUTPUT -d 50.23.131.237 -j ACCEPT
-iptables -A INPUT -s 23.29.121.18 -j ACCEPT
-iptables -A OUTPUT -d 23.29.121.18 -j ACCEPT
-iptables -A INPUT -s 209.188.5.218 -j ACCEPT
-iptables -A OUTPUT -d 209.188.5.218 -j ACCEPT
+
+# allow vpn server
+iptables -A INPUT -p udp -s $VPN -j ACCEPT
+iptables -A OUTPUT -p udp -d $VPN -j ACCEPT
+
+# allow icmp
 iptables -A INPUT -p icmp -m conntrack --ctstate NEW -j ACCEPT
+
+# allow local irc
 iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 6667 -j ACCEPT
 iptables -A INPUT -p tcp -s 127.0.0.1 -m conntrack --ctstate NEW --dport 6667 -j ACCEPT
+
+# allow local ssh
 iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 22 -j ACCEPT
+
+# allow android xbmc remote
 iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 8080 -j ACCEPT
 iptables -A INPUT -p udp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 9777 -j ACCEPT
+
+# allow local mpd
 iptables -A INPUT -p tcp -s 127.0.0.1 -m conntrack --ctstate NEW --dport 6600 -j ACCEPT
-iptables -A INPUT -j DROP
-ip6tables -A INPUT -j DROP
+
+# allow any local traffic that comes from this server
 iptables -A OUTPUT -d 192.168.178.0/24 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
+
+# drop everything else
+iptables -A INPUT -j DROP
 iptables -A OUTPUT -j DROP
-ip6tables -A OUTPUT -j DROP
+
+# save rules
 iptables-save > /etc/iptables/iptables.rules
 ip6tables-save > /etc/iptables/ip6tables.rules
+
+# restart iptables just in case
 systemctl restart iptables.service
 systemctl restart ip6tables.service
+
 systemctl status iptables.service
 systemctl status ip6tables.service
