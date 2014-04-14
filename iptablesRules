@@ -2,6 +2,7 @@
 
 # delete all existing rules
 iptables -F
+iptables -t nat -F
 ip6tables -F
 
 # set default chain policies

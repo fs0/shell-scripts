@@ -8,6 +8,8 @@ else
     echo "WARNING"
     echo "Files will be deleted."
     echo "Filenames will be altered."
+    echo
+    echo "WARNING!!! deleteSpaces BUG!!!"
 
     while true
     do
