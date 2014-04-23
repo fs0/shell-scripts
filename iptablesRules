@@ -79,8 +79,9 @@ iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 
 #iptables -A INPUT -p tcp -m conntrack --ctstate NEW --dport 51413 -j ACCEPT
 #ip6tables -A INPUT -p tcp -m conntrack --ctstate NEW --dport 51413 -j ACCEPT
 
-# allow local mpd
-iptables -A INPUT -p tcp -s 127.0.0.1 -m conntrack --ctstate NEW --dport 6600 -j ACCEPT
+# local
+iptables -A INPUT -p tcp -s 127.0.0.1 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -p tcp -s localhost -m conntrack --ctstate NEW -j ACCEPT
 
 # drop everything else
 iptables -A INPUT -j DROP
