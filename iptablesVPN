@@ -41,11 +41,11 @@ iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 
 iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 8080 -j ACCEPT
 iptables -A INPUT -p udp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 9777 -j ACCEPT
 
-# allow local mpd
-iptables -A INPUT -p tcp -s 127.0.0.1 -m conntrack --ctstate NEW --dport 6600 -j ACCEPT
 
-# allow any local traffic that comes from this server
+# allow any local traffic
 iptables -A OUTPUT -d 192.168.178.0/24 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -p tcp -s 127.0.0.1 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -p tcp -s localhost -m conntrack --ctstate NEW -j ACCEPT
 
 # drop everything else
 iptables -A INPUT -j DROP
