@@ -18,7 +18,6 @@ ip6tables -P OUTPUT DROP
 
 # accept any packet from established or related connections
 iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-ip6tables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # allow local ftp
 #iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 21 -j ACCEPT
@@ -32,11 +31,8 @@ iptables -A INPUT -p icmp -m conntrack --ctstate NEW -j ACCEPT
 # allow local irc
 iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 6667 -j ACCEPT
 iptables -A INPUT -p tcp -s 127.0.0.1 -m conntrack --ctstate NEW --dport 6667 -j ACCEPT
-ip6tables -A INPUT -p tcp -s 2a02:8070:f11c:fb00::/56 -m conntrack --ctstate NEW --dport 6667 -j ACCEPT
-ip6tables -A INPUT -p tcp -s ::1 -m conntrack --ctstate NEW --dport 6667 -j ACCEPT
 # allow irc
 #iptables -A INPUT -p tcp -m conntrack --ctstate NEW --dport 6667 -j ACCEPT
-#ip6tables -A INPUT -p tcp -m conntrack --ctstate NEW --dport 6667 -j ACCEPT
 
 # allow local ssh
 iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 22 -j ACCEPT
@@ -77,7 +73,6 @@ iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 
 
 # allow bittorrent
 #iptables -A INPUT -p tcp -m conntrack --ctstate NEW --dport 51413 -j ACCEPT
-#ip6tables -A INPUT -p tcp -m conntrack --ctstate NEW --dport 51413 -j ACCEPT
 
 # local
 iptables -A INPUT -p tcp -s 127.0.0.1 -m conntrack --ctstate NEW -j ACCEPT
@@ -85,14 +80,12 @@ iptables -A INPUT -p tcp -s localhost -m conntrack --ctstate NEW -j ACCEPT
 
 # drop everything else
 iptables -A INPUT -j DROP
-ip6tables -A INPUT -j DROP
 
 
 # OUTPUT
 
 # allow any traffic that comes from this server
 iptables -A OUTPUT -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
-ip6tables -A OUTPUT -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
 
 
 # save rules
