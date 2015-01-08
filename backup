@@ -1,0 +1,45 @@
+#!/usr/bin/bash
+
+dev=/dev/sde3
+home=/home/fs0
+src=(/data/Studium /data/music /data/videos/ng /data/games)
+mnt=/mnt/dev0
+bckp=$mnt/backup
+
+echo "mount $dev $mnt"
+sudo mount $dev $mnt
+if [ $? -ne 0 ]
+then
+    exit 1
+fi
+
+echo "creating $bckp"
+sudo mkdir -p $bckp
+sudo chown fs0.users $bckp
+
+echo "creating $bckp$home"
+mkdir -p $bckp$home
+
+for dir in ${src[*]}
+do
+    echo "creating $bckp$dir"
+    mkdir -p $bckp$dir
+done
+
+
+echo "backup $home"
+rdiff-backup \
+             --exclude $home/.viminfo \
+             --exclude $home/.cache \
+             --exclude $home/.macromedia \
+             --exclude $home/.bash_history \
+             $home $bckp$home
+
+for dir in ${src[*]}
+do
+    echo "backup $dir"
+    rdiff-backup $dir $bckp$dir
+done
+
+echo "umount $mnt"
+sudo umount $mnt

@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-VPN=94.242.205.234
+VPN=178.162.198.103
 
 # flush
 iptables -F
