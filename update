@@ -64,4 +64,4 @@ fi
 # Update
 echo
 echo "Updating ..."
-sudo packer -Syu
+sudo apacman -Syu abcdef # bug in apacman
