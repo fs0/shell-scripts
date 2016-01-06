@@ -2,8 +2,8 @@
 
 export SDL_AUDIODRIVER=alsa
 export STEAM_RUNTIME=1
-#echo "Stopping VPN..."
-#/home/fs0/prg/shell-scripts/stopvpn
+echo "Stopping VPN..."
+/home/fs0/prg/shell-scripts/stopvpn
 /usr/bin/steam
-#echo "Starting VPN..."
-#/home/fs0/prg/shell-scripts/startvpn
+echo "Starting VPN..."
+/home/fs0/prg/shell-scripts/startvpn

@@ -1,8 +1,10 @@
 #!/usr/bin/bash
 
+# /dev/sde3
+# /dev/sdf1?
 dev=/dev/sde3
 home=/home/fs0
-src=(/data/Studium /data/music /data/videos/ng /data/games)
+src=(/data/Studium /data/music /data/videos/ng /data/games /data/pictures)
 mnt=/mnt/dev0
 bckp=$mnt/backup
 
@@ -43,3 +45,8 @@ done
 
 echo "umount $mnt"
 sudo umount $mnt
+if [ $? -ne 0 ]
+then
+    echo "umount failed"
+    exit 1
+fi

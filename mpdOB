@@ -1,4 +1,0 @@
-#! /usr/bin/bash
-
-sudo sed -i s/hw:DS/hw:PCH/g /etc/mpd.conf
-sudo systemctl restart mpd

@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-VPN=178.162.198.103
+VPN=91.214.169.68
 
 # flush
 iptables -F
@@ -15,7 +15,7 @@ ip6tables -P FORWARD DROP
 ip6tables -P OUTPUT DROP
 
 # accept any local packet from established or related connections
-iptables -A INPUT -d 192.168.178.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -d 192.168.1.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # only allow tun interface and localhost
 iptables -A INPUT -i tun+ -j ACCEPT
@@ -31,21 +31,26 @@ iptables -A OUTPUT -p udp -d $VPN -j ACCEPT
 iptables -A INPUT -p icmp -m conntrack --ctstate NEW -j ACCEPT
 
 # allow local irc
-iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 6667 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.1.0/24 -m conntrack --ctstate NEW --dport 6667 -j ACCEPT
 iptables -A INPUT -p tcp -s 127.0.0.1 -m conntrack --ctstate NEW --dport 6667 -j ACCEPT
 
 # allow local ssh
-iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 22 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.1.0/24 -m conntrack --ctstate NEW --dport 22 -j ACCEPT
 
 # allow android xbmc remote
-iptables -A INPUT -p tcp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 8080 -j ACCEPT
-iptables -A INPUT -p udp -s 192.168.178.0/24 -m conntrack --ctstate NEW --dport 9777 -j ACCEPT
+iptables -A INPUT -p tcp -s 192.168.1.0/24 -m conntrack --ctstate NEW --dport 8080 -j ACCEPT
+iptables -A INPUT -p udp -s 192.168.1.0/24 -m conntrack --ctstate NEW --dport 9777 -j ACCEPT
+
+# allow mpd remote
+iptables -A INPUT -p tcp -s 192.168.1.0/24 -m conntrack --ctstate NEW --dport 6600 -j ACCEPT
 
 
 # allow any local traffic
-iptables -A OUTPUT -d 192.168.178.0/24 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
 iptables -A INPUT -p tcp -s 127.0.0.1 -m conntrack --ctstate NEW -j ACCEPT
 iptables -A INPUT -p tcp -s localhost -m conntrack --ctstate NEW -j ACCEPT
+
+# output
+iptables -A OUTPUT -d 192.168.1.0/24 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
 
 # drop everything else
 iptables -A INPUT -j DROP
