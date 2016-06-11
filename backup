@@ -2,16 +2,70 @@
 
 # /dev/sde3
 # /dev/sdf1?
-dev=/dev/sde3
+dev=/dev/sdf1
 home=/home/fs0
-src=(/data/Studium /data/music /data/videos/ng /data/games /data/pictures)
+win0=/dev/sda6
+win1=/dev/sdd2
 mnt=/mnt/dev0
+mntwin0=/mnt/win0
+mntwin1=/mnt/win1
+src=(/data/Studium /data/music /data/videos/ng /data/games /data/pictures $mntwin0/Users/fs0/AppData $mntwin0/Users/fs0/programs $mntwin1/Documents)
 bckp=$mnt/backup
 
+echo "umounting (to be safe)"
+sudo umount $mnt
+sudo umount $mntwin0
+sudo umount $mntwin1
+
+echo "creating $mnt"
+sudo mkdir $mnt
 echo "mount $dev $mnt"
 sudo mount $dev $mnt
 if [ $? -ne 0 ]
 then
+    echo "failed to mount $dev"
+    exit 1
+fi
+
+echo "creating $mntwin0"
+sudo mkdir $mntwin0
+echo "mount $win0 $mntwin0"
+sudo mount $win0 $mntwin0
+if [ $? -ne 0 ]
+then
+    echo "failed to mount $win0"
+
+    echo "umount $mnt"
+    sudo umount $mnt
+    if [ $? -ne 0 ]
+    then
+        echo "umount $mnt failed"
+    fi
+
+    exit 1
+fi
+
+echo "creating $mntwin1"
+sudo mkdir $mntwin1
+echo "mount $win1 $mntwin1"
+sudo mount $win1 $mntwin1
+if [ $? -ne 0 ]
+then
+    echo "failed to mount $win1"
+
+    echo "umount $mnt"
+    sudo umount $mnt
+    if [ $? -ne 0 ]
+    then
+        echo "umount $mnt failed"
+    fi
+    echo "umount $win0"
+    sudo umount $win0
+    if [ $? -ne 0 ]
+    then
+        echo "umount $win0 failed"
+    fi
+
     exit 1
 fi
 
@@ -43,10 +97,30 @@ do
     rdiff-backup $dir $bckp$dir
 done
 
+err_code=0
+
 echo "umount $mnt"
 sudo umount $mnt
 if [ $? -ne 0 ]
 then
-    echo "umount failed"
-    exit 1
+    echo "umount $mnt failed"
+    err_code=1
 fi
+
+echo "umount $mntwin0"
+sudo umount $mntwin0
+if [ $? -ne 0 ]
+then
+    echo "umount $mntwin0 failed"
+    err_code=1
+fi
+
+echo "umount $mntwin1"
+sudo umount $mntwin1
+if [ $? -ne 0 ]
+then
+    echo "umount $mntwin1 failed"
+    err_code=1
+fi
+
+exit $err_code
