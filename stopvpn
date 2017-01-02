@@ -1,7 +1,7 @@
 #! /usr/bin/bash
 
-sudo systemctl stop openvpn@vpn.service
+sudo systemctl stop openvpn-client@vpn.service
 sudo /home/fs0/prg/shell-scripts/iptablesRules
-sudo systemctl status openvpn@vpn.service
+sudo systemctl status openvpn-client@vpn.service
 sudo netctl stop vpn_network
 sudo netctl start my_network

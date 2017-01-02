@@ -29,8 +29,8 @@ fi
 
 echo "creating $mntwin0"
 sudo mkdir $mntwin0
-echo "mount $win0 $mntwin0"
-sudo mount $win0 $mntwin0
+echo "mount -o ro $win0 $mntwin0"
+sudo mount -o ro $win0 $mntwin0
 if [ $? -ne 0 ]
 then
     echo "failed to mount $win0"
@@ -47,8 +47,8 @@ fi
 
 echo "creating $mntwin1"
 sudo mkdir $mntwin1
-echo "mount $win1 $mntwin1"
-sudo mount $win1 $mntwin1
+echo "mount -o ro $win1 $mntwin1"
+sudo mount -o ro $win1 $mntwin1
 if [ $? -ne 0 ]
 then
     echo "failed to mount $win1"

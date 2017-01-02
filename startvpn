@@ -3,5 +3,5 @@
 sudo netctl stop my_network
 sudo netctl start vpn_network
 sudo /home/fs0/prg/shell-scripts/iptablesVPN
-sudo systemctl start openvpn@vpn.service
-sudo systemctl status openvpn@vpn.service
+sudo systemctl start openvpn-client@vpn.service
+sudo systemctl status openvpn-client@vpn.service
