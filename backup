@@ -2,7 +2,7 @@
 
 # /dev/sde3
 # /dev/sdf1?
-dev=/dev/sdf1
+dev=/dev/sde3
 home=/home/fs0
 win0=/dev/sda6
 win1=/dev/sdd2
